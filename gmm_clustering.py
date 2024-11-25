@@ -1,18 +1,11 @@
 import pandas as pd
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 from sklearn.preprocessing import StandardScaler
 from sklearn.mixture import GaussianMixture
 
 # Funksjon for å laste inn og forberede data
 def load_and_prepare_data(filepath):
-    """
-    Laster inn og forbereder datasettet for klyngeanalyse med K-means og GMM.
-
-    Args:
-        filepath (str): Stien til CSV-filen.
-
-    Returns:
-        tuple: (Renset og skalert datasett, Skaleringsobjekt)
-    """
     data = pd.read_csv(filepath)
     columns_to_keep = ["Calories_Burned", "Workout_Frequency (days/week)", "Fat_Percentage"]
     data = data[columns_to_keep].dropna()
@@ -22,16 +15,6 @@ def load_and_prepare_data(filepath):
 
 # Funksjon for GMM-klustering
 def perform_gmm_clustering(data, n_components):
-    """
-    Utfører GMM-klyngeanalyse.
-
-    Args:
-        data (pd.DataFrame): Renset og skalert datasett.
-        n_components (int): Antall klynger (komponenter).
-
-    Returns:
-        tuple: GMM-modellen og predikerte klynger.
-    """
     gmm = GaussianMixture(n_components=n_components, random_state=42)
     gmm.fit(data)
     return gmm, gmm.predict(data)
@@ -59,6 +42,39 @@ def describe_clusters_with_percentages(means, feature_names, scaler, original_da
             percentage_diff = ((value - original_mean) / original_mean) * 100
             print(f"- {feature_name}: {value:.2f} ({percentage_diff:+.2f}%)")
 
+# Funksjon for 3D scatter-plot
+def plot_gmm_clusters_3d(data, labels, feature_names):
+    """
+    Visualiserer GMM-klynger i 3D.
+
+    Args:
+        data (pd.DataFrame): Renset og skalert datasett.
+        labels (array): Klyngeetiketter fra GMM.
+        feature_names (list): Liste med navn på variablene.
+    """
+    fig = plt.figure(figsize=(10, 8))
+    ax = fig.add_subplot(111, projection='3d')
+
+    # Plot datapunktene i 3D
+    scatter = ax.scatter(
+        data.iloc[:, 0],  # Første variabel
+        data.iloc[:, 1],  # Andre variabel
+        data.iloc[:, 2],  # Tredje variabel
+        c=labels, cmap='viridis', s=50
+    )
+
+    # Legg til aksetitler basert på variabelnavn
+    ax.set_title("GMM Clustering in 3D")
+    ax.set_xlabel(feature_names[0])
+    ax.set_ylabel(feature_names[1])
+    ax.set_zlabel(feature_names[2])
+
+    # Legg til fargebar for klyngene
+    cbar = fig.colorbar(scatter, ax=ax, pad=0.1)
+    cbar.set_label("Cluster")
+
+    plt.show()
+
 # Hovedprogram
 if __name__ == "__main__":
     # Last inn og forbered data
@@ -78,5 +94,9 @@ if __name__ == "__main__":
 
     # Beskriv klyngene med prosentvis avvik fra gjennomsnittet
     describe_clusters_with_percentages(gmm_model.means_, feature_names, scaler, original_data)
+
+    # Plot GMM-klyngene i 3D
+    plot_gmm_clusters_3d(cleaned_data, cluster_labels, feature_names)
+
 
 
