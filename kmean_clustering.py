@@ -55,8 +55,8 @@ fig.colorbar(scatter, ax=ax, label="Cluster")
 plt.show()
 
 # Resultater
-print("Gjennomsnitt for hver klynge (Cluster):")
+print("Average for each cluster (Cluster):")
 print(cluster_means)
 
-print("\nProsentvis forskjell fra totalgjennomsnitt:")
+print("\nProcent differance form total average:")
 print(percentage_diff)
