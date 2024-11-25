@@ -20,6 +20,15 @@ original_data = pd.read_csv(filepath)[
 ]
 original_data['Cluster'] = data_cleaned['Cluster']
 
+# Beregn totalgjennomsnitt
+total_means = original_data[["Calories_Burned", "Workout_Frequency (days/week)", "Fat_Percentage"]].mean()
+
+# Beregn gjennomsnitt for hver klynge
+cluster_means = original_data.groupby('Cluster').mean()
+
+# Legg til prosentvis forskjell fra totalgjennomsnitt
+percentage_diff = (cluster_means - total_means) / total_means * 100
+
 # 3D-visualisering
 fig = plt.figure(figsize=(10, 8))
 ax = fig.add_subplot(111, projection='3d')
@@ -46,5 +55,8 @@ fig.colorbar(scatter, ax=ax, label="Cluster")
 plt.show()
 
 # Resultater
-print("Gjennomsnitt for hver klynge:")
-print(original_data.groupby('Cluster').mean())
+print("Gjennomsnitt for hver klynge (Cluster):")
+print(cluster_means)
+
+print("\nProsentvis forskjell fra totalgjennomsnitt:")
+print(percentage_diff)
