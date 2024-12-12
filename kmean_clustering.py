@@ -24,9 +24,9 @@ def load_and_prepare_data_gender(filepath):
             males, females)
 
 # Function to describe clusters with percentages
-def describe_clusters_with_percentages(means, feature_names, scaler, original_data, gender):
+def describe_clusters_with_percentages(means, feature_names, scaler, original_data):
     original_means = original_data.mean().to_dict()
-    print(f"\nCluster Descriptions for {gender} (in original scale and percentages over/below mean):")
+    print(f"\nCluster Description (in original scale and percentages over/below mean):")
     for cluster_idx, cluster_means in enumerate(means):
         inverse_means = scaler.inverse_transform([cluster_means])[0]
         print(f"\nCluster {cluster_idx + 1}:")
